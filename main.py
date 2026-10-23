@@ -1,14 +1,38 @@
-from geometry.triangulo import Ponto, Triangulo
+#from geometry.triangulo import Ponto, Triangulo
+
+
+#def main():
+   # pontoA = Ponto(0, 0)
+   # pontoB = Ponto(5, 0)
+   # pontoC = Ponto(0, 5)
+
+    #triangulo1 = Triangulo(pontoA, pontoB, pontoC)
+
+    #print(triangulo1)
+
+#if __name__ == '__main__':
+   # main()
+
+
+
+from cenario import Cenario
+from renderizacao import Renderizador
 
 
 def main():
-    pontoA = Ponto(0, 0)
-    pontoB = Ponto(5, 0)
-    pontoC = Ponto(0, 5)
+    cenario = Cenario(
+        largura=800,
+        altura=600
+    )
 
-    triangulo1 = Triangulo(pontoA, pontoB, pontoC)
+    cenario.gerar_triangulos(
+        quantidade=10,
+        semente=42
+    )
 
-    print(triangulo1)
+    renderizador = Renderizador(cenario)
+    renderizador.iniciar()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
