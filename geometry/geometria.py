@@ -1,5 +1,8 @@
 from dataclasses import dataclass, field
 
+TOLERANCIA = 1e-9
+
+
 @dataclass(frozen=True)
 class Ponto:
     x: float
@@ -13,7 +16,7 @@ class Envelope:
     xmax: float
     ymax: float
 
-    def contem(self, ponto: Ponto, tolerancia=1e-9) -> bool:
+    def contem(self, ponto: Ponto, tolerancia: float = TOLERANCIA) -> bool:
         return (
             self.xmin - tolerancia <= ponto.x <= self.xmax + tolerancia
             and self.ymin - tolerancia <= ponto.y <= self.ymax + tolerancia
@@ -31,9 +34,14 @@ class Triangulo:
 
     def __post_init__(self):
         self.envelope = Envelope(
-            xmin=min(self.a.x, self.b.x, self.c.x),
-            ymin=min(self.a.y, self.b.y, self.c.y),
-            xmax=max(self.a.x, self.b.x, self.c.x),
-            ymax=max(self.a.y, self.b.y, self.c.y)
+            min(self.a.x, self.b.x, self.c.x),
+            min(self.a.y, self.b.y, self.c.y),
+            max(self.a.x, self.b.x, self.c.x),
+            max(self.a.y, self.b.y, self.c.y)
         )
-    
+
+    def area_dupla(self):
+        return (
+            (self.b.x - self.a.x) * (self.c.y - self.a.y)
+            - (self.b.y - self.a.y) * (self.c.x - self.a.x)
+        )

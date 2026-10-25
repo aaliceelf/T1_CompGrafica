@@ -1,4 +1,6 @@
-from geometry.geometria import Ponto, Triangulo
+
+from geometry.geometria import Ponto, Triangulo, TOLERANCIA
+
 
 def orientacao(a: Ponto, b: Ponto, p: Ponto) -> float:
     return (
@@ -10,34 +12,39 @@ def orientacao(a: Ponto, b: Ponto, p: Ponto) -> float:
 def ponto_no_triangulo(
     ponto: Ponto,
     triangulo: Triangulo,
-    tolerancia: float = 1e-9
+    tolerancia: float = TOLERANCIA
 ) -> bool:
 
     a = triangulo.a
     b = triangulo.b
     c = triangulo.c
 
-    # Tolerância proporcional à escala do triângulo
-    escala = max(
-        abs(a.x - b.x), abs(a.y - b.y),
-        abs(b.x - c.x), abs(b.y - c.y),
-        abs(c.x - a.x), abs(c.y - a.y)
-    )
+    area2 = orientacao(a, b, c)
 
-    if escala == 0:
+    if area2 == 0:
         return False
 
-    eps = tolerancia * escala * escala
+    arestas = [
+        (a, b),
+        (b, c),
+        (c, a)
+    ]
 
-    # Ignora triângulos degenerados
-    if abs(orientacao(a, b, c)) <= eps:
-        return False
+    sinal = 1 if area2 > 0 else -1
 
-    d1 = orientacao(a, b, ponto)
-    d2 = orientacao(b, c, ponto)
-    d3 = orientacao(c, a, ponto)
+    for u, v in arestas:
+        comprimento = (
+            (v.x - u.x)**2
+            + (v.y - u.y)**2
+        )**0.5
 
-    tem_negativo = d1 < -eps or d2 < -eps or d3 < -eps
-    tem_positivo = d1 > eps or d2 > eps or d3 > eps
+        if comprimento == 0:
+            return False
 
-    return not (tem_negativo and tem_positivo)
+        if (
+            sinal * orientacao(u, v, ponto)
+            < -tolerancia * comprimento
+        ):
+            return False
+
+    return True
